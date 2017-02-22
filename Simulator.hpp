@@ -429,7 +429,7 @@ void Simulator::run_conflict_counter(vector<Policy>* sim_team, int sim_p, int si
 //runs a strictly cooperative case
 void Simulator::run_cooperative_case(vector<Policy>* sim_team, int sim_p, int sim_pp)
 {
-    sim_team->at(sim_p).policy_fitness += 1;
+    sim_team->at(sim_p).num_conflicts += 1;
 }
 
 
@@ -439,15 +439,15 @@ void Simulator::run_domino_case(vector<Policy>* sim_team, int sim_p, int sim_pp)
 {
     if (sim_team->at(sim_p).corp_id == 0)
     {
-        sim_team->at(sim_p).policy_fitness += 1;
+        sim_team->at(sim_p).num_conflicts += 1;
     }
     if (sim_team->at(sim_p).corp_id == 1)
     {
-        sim_team->at(sim_p).policy_fitness += 1;
+        sim_team->at(sim_p).num_conflicts += 1;
         //team 1 will recieve a penalty for all conflicts that are with their own team and the other team
         if (sim_team->at(sim_p).corp_id == sim_team->at(sim_pp).corp_id)
         {
-            sim_team->at(0).policy_fitness = sim_team->at(0).policy_fitness - 1;
+            sim_team->at(0).num_conflicts = sim_team->at(0).num_conflicts - 1;
             /*
             for (int tt=0; tt<sim_team->size(); tt++)
             {
@@ -478,7 +478,7 @@ void Simulator::run_uncoop_case(vector<Policy>* sim_team, int sim_p, int sim_pp)
     {
         if (sim_team->at(sim_p).corp_id == sim_team->at(sim_pp).corp_id)
         {
-            sim_team->at(sim_p).policy_fitness += 1;
+            sim_team->at(sim_p).num_conflicts += 1;
             //cout << "team 0 inner team conflict" << endl;
             //cout << "agent" << "\t" << sim_p << "\t" << "CA acitvated by" << "\t" << "agent" << "\t" << sim_pp << endl;
             //team 0 will only recieve a penalty if they conflict with in their own team
@@ -491,7 +491,7 @@ void Simulator::run_uncoop_case(vector<Policy>* sim_team, int sim_p, int sim_pp)
     }
     if (sim_team->at(sim_p).corp_id == 1)
     {
-        sim_team->at(sim_p).policy_fitness += 1;
+        sim_team->at(sim_p).num_conflicts += 1;
         //team 1 will recieve a penalty for all conflicts that are with their own team and the other team
         if (sim_team->at(sim_p).corp_id == sim_team->at(sim_pp).corp_id)
         {
@@ -513,7 +513,7 @@ void Simulator::run_behavorial_change_case(vector<Policy>* sim_team, int gen, in
 {
     if (gen < pP->gen_max/2)
     {
-        sim_team->at(sim_p).policy_fitness += 1;
+        sim_team->at(sim_p).num_conflicts += 1;
     }
     if (gen >= pP->gen_max/2)
     {
@@ -521,7 +521,7 @@ void Simulator::run_behavorial_change_case(vector<Policy>* sim_team, int gen, in
         {
             if (sim_team->at(sim_p).corp_id == sim_team->at(sim_pp).corp_id)
             {
-                sim_team->at(sim_p).policy_fitness += 1;
+                sim_team->at(sim_p).num_conflicts += 1;
                 //cout << "team 0 inner team conflict" << endl;
                 //cout << "agent" << "\t" << sim_p << "\t" << "CA acitvated by" << "\t" << "agent" << "\t" << sim_pp << endl;
                 //team 0 will only recieve a penalty if they conflict with in their own team
@@ -534,7 +534,7 @@ void Simulator::run_behavorial_change_case(vector<Policy>* sim_team, int gen, in
         }
         if (sim_team->at(sim_p).corp_id == 1)
         {
-            sim_team->at(sim_p).policy_fitness += 1;
+            sim_team->at(sim_p).num_conflicts += 1;
             //team 1 will recieve a penalty for all conflicts that are with their own team and the other team
             if (sim_team->at(sim_p).corp_id == sim_team->at(sim_pp).corp_id)
             {
@@ -557,21 +557,21 @@ void Simulator::run_behaviroal_domino_case(vector<Policy>* sim_team, int sim_p, 
 {
     if (gen < pP->gen_max/2)
     {
-        sim_team->at(sim_p).policy_fitness += 1;
+        sim_team->at(sim_p).num_conflicts += 1;
     }
     if (gen >= pP->gen_max/2)
     {
         if (sim_team->at(sim_p).corp_id == 0)
         {
-            sim_team->at(sim_p).policy_fitness += 1;
+            sim_team->at(sim_p).num_conflicts += 1;
         }
         if (sim_team->at(sim_p).corp_id == 1)
         {
-            sim_team->at(sim_p).policy_fitness += 1;
+            sim_team->at(sim_p).num_conflicts += 1;
             //team 1 will recieve a penalty for all conflicts that are with their own team and the other team
             if (sim_team->at(sim_p).corp_id == sim_team->at(sim_pp).corp_id)
             {
-                sim_team->at(0).policy_fitness = sim_team->at(0).policy_fitness - 1;
+                sim_team->at(0).num_conflicts = sim_team->at(0).num_conflicts - 1;
                 /*
                  for (int tt=0; tt<sim_team->size(); tt++)
                  {
@@ -605,8 +605,8 @@ void Simulator::run_malicious_case(vector<Policy>* sim_team, int sim_p, int sim_
     }
     if (sim_team->at(sim_p).corp_id == 1)
     {
-        sim_team->at(sim_p).policy_fitness += 1;
-        sim_team->at(0).policy_fitness = sim_team->at(0).policy_fitness - 1;
+        sim_team->at(sim_p).num_conflicts += 1;
+        sim_team->at(0).num_conflicts = sim_team->at(0).num_conflicts - 1;
     }
 }
 
@@ -621,8 +621,8 @@ void Simulator::run_static_full_malicious_case(vector<Policy>* sim_team, int sim
     }
     if (sim_team->at(sim_p).corp_id == 1)
     {
-        sim_team->at(sim_p).policy_fitness += 1;
-        sim_team->at(0).policy_fitness = sim_team->at(0).policy_fitness - 1;
+        sim_team->at(sim_p).num_conflicts += 1;
+        sim_team->at(0).num_conflicts = sim_team->at(0).num_conflicts - 1;
     }
 }
 
@@ -938,7 +938,7 @@ void Simulator::update_time_spent(vector<Policy>* sim_team, int sim_p)
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
 //Fittness Functions
-//Calculates an agents fitness
+//Calculates an agents conflicts
 void Simulator::get_agent_CA_fitness(vector<Policy>* sim_team)
 {
     for (int p=0; p<sim_team->size(); p++)
@@ -947,7 +947,7 @@ void Simulator::get_agent_CA_fitness(vector<Policy>* sim_team)
         {
             if (sim_team->at(p).current_travel_speed == pP->ca_flight_speed)
             {
-                sim_team->at(p).policy_fitness += 1;
+                sim_team->at(p).num_conflicts += 1;
             }
             else
             {
@@ -958,7 +958,7 @@ void Simulator::get_agent_CA_fitness(vector<Policy>* sim_team)
 }
 
 /////////////////////////////////////////////////////////////////
-//Calculates an agents fitness
+//Calculates an agents destination fitness
 void Simulator::get_agent_destination_fitness(vector<Policy>* sim_team)
 {
     for (int p=0; p<sim_team->size(); p++)
@@ -976,21 +976,21 @@ void Simulator::get_agent_destination_fitness(vector<Policy>* sim_team)
                 else
                 {
                     //cout << "sim agent" << "\t" << p << "\t" << "has not reached its final destination" << endl;
-                    sim_team->at(p).policy_fitness = sim_team->at(p).policy_fitness + 10;
+                    sim_team->at(p).policy_fitness = sim_team->at(p).policy_fitness + 100;
                     sim_team->at(p).at_final_destination = 0;
                 }
             }
             else
             {
                 //cout << "sim agent" << "\t" << p << "\t" << "has not reached its final destination" << endl;
-                sim_team->at(p).policy_fitness = sim_team->at(p).policy_fitness + 10;
+                sim_team->at(p).policy_fitness = sim_team->at(p).policy_fitness + 100;
                 sim_team->at(p).at_final_destination = 0;
             }
         }
         else
         {
             //cout << "sim agent" << "\t" << p << "\t" << "has not reached its final destination" << endl;
-            sim_team->at(p).policy_fitness = sim_team->at(p).policy_fitness + 10;
+            sim_team->at(p).policy_fitness = sim_team->at(p).policy_fitness + 100;
             sim_team->at(p).at_final_destination = 0;
         }
     }
@@ -1006,6 +1006,9 @@ void Simulator::run_simulation(vector<Policy>* psim_team, int gen, vector<double
     for (int p=0; p<psim_team->size(); p++)
     {
         psim_team->at(p).policy_fitness = 0;
+        psim_team->at(p).num_conflicts = 0;
+        psim_team->at(p).distance_traveled = 0;
+        psim_team->at(p).time_spent = 0;
         psim_team->at(p).projected_telem.resize(3);
     }
     

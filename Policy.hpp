@@ -27,7 +27,7 @@ public:
     vector<Waypoint> check_points;
     
     double dist_to_target_waypoint;
-    double policy_fitness = 10000000000;
+    double policy_fitness = 100000000000;
     vector<double> f_vals;              //number of conflicts, distance, time
     double current_travel_speed;
     int simulation_id;
@@ -37,9 +37,9 @@ public:
     int selection_counter;
     int corp_id;
     int at_final_destination;
-    double num_conflicts;
-    double distance_traveled;
-    double time_spent;
+    double num_conflicts = 100000000000;
+    double distance_traveled = 100000000000;
+    double time_spent = 100000000000;
     
     vector<double> current_telem;
     vector<double> projected_telem;

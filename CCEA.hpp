@@ -60,6 +60,7 @@ public:
     void reset_selection_identifiers();
     void build_sim_team(int po);
     void get_fair_statistics();
+    void linear_combination(int team, int indv, int p);
     void get_policy_fitness(int po, int len);
     void simulate_team(vector<Policy>* sim_team, int gen, vector<double> &conflict_counter);
     
@@ -766,7 +767,23 @@ void CCEA::get_fair_statistics()
 
 
 /////////////////////////////////////////////////////////////////
-//build the randomly generated sim_team
+//Linear combination
+void CCEA::linear_combination(int team, int indv, int p)
+{
+    double A = pP->w0*corp.at(team).agents.at(indv).policies.at(p).f_vals.at(0);
+    double B = pP->w1*corp.at(team).agents.at(indv).policies.at(p).f_vals.at(1);
+    double C = pP->w2*corp.at(team).agents.at(indv).policies.at(p).f_vals.at(2);
+    corp.at(team).agents.at(indv).policies.at(p).policy_fitness = A+B+C;
+    cout << "TEAM" << "\t" << team << "\t" << "AGENT" << "\t" << indv << "\t" << "POLICY" << "\t" << p << endl;
+    cout << "TOTAL NUMBER OF CONFLICTS" << "\t" << "\t" << A << endl;
+    cout << "TOTAL DISTANCE TRAVELED SQUARED" << "\t" << "\t" << B << endl;
+    cout << "TOTAL TIME SPENT SQUARED" << "\t" << "\t" << C << endl;
+    cout << "TOTAL FITNESS" << "\t" << "\t" << corp.at(team).agents.at(indv).policies.at(p).policy_fitness << endl;
+}
+
+
+/////////////////////////////////////////////////////////////////
+//Get the fitness for each policy
 void CCEA::get_policy_fitness(int po, int len)
 {
     for (int team=0; team<pP->num_teams; team++)
@@ -776,11 +793,17 @@ void CCEA::get_policy_fitness(int po, int len)
         {
             cc = pP->team_sizes.at(team-1);
         }
-        double sum = 0;
+        double sum_f0 = 0;
+        double sum_f1 = 0;
+        double sum_f2 = 0;
         for (int indv=0+cc; indv<cc+pP->team_sizes.at(team); indv++)
         {
-            sum += sim_team.at(indv).policy_fitness;
+            sum_f0 += sim_team.at(indv).num_conflicts;
+            sum_f1 += sim_team.at(indv).distance_traveled;
+            sum_f2 += sim_team.at(indv).time_spent;
         }
+        sum_f1 = sum_f1*sum_f1;
+        sum_f2 = sum_f2*sum_f2;
         for (int indv=0; indv<pP->team_sizes.at(team); indv++)
         {
             for (int p=0; p<pP->num_policies; p++)
@@ -790,7 +813,13 @@ void CCEA::get_policy_fitness(int po, int len)
                     //without leniency
                     if (pP->leniency == 0)
                     {
-                        corp.at(team).agents.at(indv).policies.at(p).policy_fitness = sum;
+                        corp.at(team).agents.at(indv).policies.at(p).num_conflicts = sum_f0;
+                        corp.at(team).agents.at(indv).policies.at(p).distance_traveled = sum_f1;
+                        corp.at(team).agents.at(indv).policies.at(p).time_spent = sum_f2;
+                        corp.at(team).agents.at(indv).policies.at(p).f_vals.at(0) = sum_f0;
+                        corp.at(team).agents.at(indv).policies.at(p).f_vals.at(1) = sum_f1;
+                        corp.at(team).agents.at(indv).policies.at(p).f_vals.at(2) = sum_f2;
+                        linear_combination(team, indv, p);
                     }
                     
                     //with leniency
@@ -798,14 +827,29 @@ void CCEA::get_policy_fitness(int po, int len)
                     {
                         if(len==0)
                         {
-                            corp.at(team).agents.at(indv).policies.at(p).policy_fitness = sum;
+                            corp.at(team).agents.at(indv).policies.at(p).num_conflicts = sum_f0;
+                            corp.at(team).agents.at(indv).policies.at(p).distance_traveled = sum_f1;
+                            corp.at(team).agents.at(indv).policies.at(p).time_spent = sum_f2;
+                            corp.at(team).agents.at(indv).policies.at(p).f_vals.at(0) = sum_f0;
+                            corp.at(team).agents.at(indv).policies.at(p).f_vals.at(1) = sum_f1;
+                            corp.at(team).agents.at(indv).policies.at(p).f_vals.at(2) = sum_f2;
+                            linear_combination(team, indv, p);
                         }
                         if (len>0)
                         {
-                            if(corp.at(team).agents.at(indv).policies.at(p).policy_fitness>sum)
+                            if(corp.at(team).agents.at(indv).policies.at(p).f_vals.at(0) > sum_f0)
                             {
-                                corp.at(team).agents.at(indv).policies.at(p).policy_fitness = sum;
+                                if(corp.at(team).agents.at(indv).policies.at(p).f_vals.at(1) > sum_f0)
+                                {
+                                    if(corp.at(team).agents.at(indv).policies.at(p).f_vals.at(2) > sum_f0)
+                                    {
+                                        corp.at(team).agents.at(indv).policies.at(p).f_vals.at(0) = sum_f0;
+                                        corp.at(team).agents.at(indv).policies.at(p).f_vals.at(1) = sum_f1;
+                                        corp.at(team).agents.at(indv).policies.at(p).f_vals.at(2) = sum_f2;
+                                    }
+                                }
                             }
+                            linear_combination(team, indv, p);
                         }
                     }
                 }
