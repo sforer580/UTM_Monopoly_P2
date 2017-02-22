@@ -28,6 +28,7 @@ public:
     
     double dist_to_target_waypoint;
     double policy_fitness = 10000000000;
+    vector<double> f_vals;              //number of conflicts, distance, time
     double current_travel_speed;
     int simulation_id;
     int selected;       //0 if not yet seleceted, 1 for selected
@@ -36,6 +37,9 @@ public:
     int selection_counter;
     int corp_id;
     int at_final_destination;
+    double num_conflicts;
+    double distance_traveled;
+    double time_spent;
     
     vector<double> current_telem;
     vector<double> projected_telem;

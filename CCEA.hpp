@@ -166,7 +166,11 @@ void CCEA::create_population()
                 corp.at(ii).agents.at(jj).policies.push_back(Po);
                 corp.at(ii).agents.at(jj).policies.at(pp).policy_id = pp; //sets the policy id for that policy
                 corp.at(ii).agents.at(jj).policies.at(pp).corp_id = ii; //sets the corporation id for that policy
-                
+                corp.at(ii).agents.at(jj).policies.at(pp).f_vals.resize(3);
+                for (int f=0; f<pP->num_f_vals; f++)
+                {
+                    corp.at(ii).agents.at(jj).policies.at(pp).f_vals.at(f) = 0;
+                }
                 for (int ww=0; ww < pP->num_waypoints+2; ww++)
                 {
                     Waypoint W;

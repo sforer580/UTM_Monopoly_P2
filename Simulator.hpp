@@ -76,6 +76,8 @@ public:
     void get_new_telem(vector<Policy>* sim_team, int sim_p);
     void get_new_telem_option_1(vector<Policy>* sim_team, int sim_p);
     void check_if_at_waypoint(vector<Policy>* sim_team, int sim_p);
+    void update_distance_traveled(vector<Policy>* sim_team, int sim_p);
+    void update_time_spent(vector<Policy>* sim_team, int sim_p);
     void check_if_at_final_destination(vector<Policy>* sim_team, int sim_p);
     
     //Fitness Calculations
@@ -909,6 +911,25 @@ void Simulator::get_new_telem(vector<Policy>* sim_team, int sim_p)
 }
 
 
+
+/////////////////////////////////////////////////////////////////
+//Updated distance traveled
+//updates the distance traveled
+void Simulator::update_distance_traveled(vector<Policy>* sim_team, int sim_p)
+{
+    sim_team->at(sim_p).distance_traveled += sim_team->at(sim_p).current_travel_speed*pP->delta_t;
+}
+
+
+/////////////////////////////////////////////////////////////////
+//Updated time spent
+//updates the time spent in the simulator
+void Simulator::update_time_spent(vector<Policy>* sim_team, int sim_p)
+{
+    sim_team->at(sim_p).time_spent += pP->delta_t;
+}
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //END TELEMETRY CALCULATIONS
@@ -1042,6 +1063,8 @@ void Simulator::run_simulation(vector<Policy>* psim_team, int gen, vector<double
                 
                 //runs a check to see if the agent has reached their target waypoint
                 check_if_at_waypoint(psim_team, sim_p);
+                update_distance_traveled(psim_team, sim_p);
+                update_time_spent(psim_team, sim_p);
                 
                 /*
                  cout << "new telem" << endl;
