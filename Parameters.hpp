@@ -82,7 +82,7 @@ public:
     int num_f_vals = 3;
     double w0 = 1;          //for linear combination
     double w1 = 1;          //for linear combination
-    double w2 = 2;          //for linear combination
+    double w2 = 1;          //for linear combination
     
     //Experiments
     int coop_no_len = 0;                                    //0=off, 1=on
