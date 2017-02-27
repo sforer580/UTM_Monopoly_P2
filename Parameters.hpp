@@ -55,8 +55,8 @@ public:
     void set_sim_dim();
     
     //Team Settings
-    int num_teams = 1;          //must be an interger 0-2
-    int team_0 = 1;
+    int num_teams = 2;          //must be an interger 0-2
+    int team_0 = 10;
     int team_1 = 5;
     int team_2 = 0;
     int team_3 = 0;
@@ -66,15 +66,15 @@ public:
     int team_7 = 0;
     int team_8 = 0;
     int team_9 = 0;
-    int num_policies = 2;
-    int num_waypoints = 6;      //number of intermediate waypoints, total number of waypoints is num_waypoints + 2
+    int num_policies = 6;
+    int num_waypoints = 1;      //number of intermediate waypoints, total number of waypoints is num_waypoints + 2
     
     vector<int> team_sizes;
     
     void set_team_sizes();
     
     //CCEA Settings
-    int gen_max = 20;
+    int gen_max = 2;
     int to_kill = num_policies/2;
     int to_replicate = to_kill;
     double mutate_percentage = 50;
@@ -86,7 +86,7 @@ public:
     
     //Experiments
     int coop_no_len = 0;                                    //0=off, 1=on
-    int coop_with_len = 1;                                  //0=off, 1=on
+    int coop_with_len = 0;                                  //0=off, 1=on
     int coop_fair = 0;                                      //0=off, 1=on
     int stat_coop_with_loaded_wp_with_len = 0;              //0=off, 1=on
     int uncoop_no_len = 0;                                  //0=off, 1=on
@@ -96,7 +96,7 @@ public:
     int domino_with_len = 0;                                //0=off, 1=on
     int stat_domino_with_loaded_wp_with_len = 0;            //0=off, 1=on
     int domino_behavioral_switch_with_len = 0;              //0=off, 1=on
-    int malicious_with_len = 0;                             //0=off, 1=on
+    int malicious_with_len = 1;                             //0=off, 1=on
     int stat_full_malicious_with_len = 0;                   //0=off, 1=on
     int stat_full_malicious_with_loaded_wp_with_len = 0;    //0=off, 1=on
     int leniency;

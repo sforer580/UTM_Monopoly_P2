@@ -51,6 +51,7 @@ public:
     void set_conflict_counter();
     void build_world();
     int loadwaypoints();
+    void output_agent_info();
     
     //Functions for Simulation
     void set_up_experiment_parameters();
@@ -774,11 +775,11 @@ void CCEA::linear_combination(int team, int indv, int p)
     double B = pP->w1*corp.at(team).agents.at(indv).policies.at(p).f_vals.at(1);
     double C = pP->w2*corp.at(team).agents.at(indv).policies.at(p).f_vals.at(2);
     corp.at(team).agents.at(indv).policies.at(p).policy_fitness = A+B+C;
-    cout << "TEAM" << "\t" << team << "\t" << "AGENT" << "\t" << indv << "\t" << "POLICY" << "\t" << p << endl;
-    cout << "TOTAL NUMBER OF CONFLICTS" << "\t" << "\t" << A << endl;
-    cout << "TOTAL DISTANCE TRAVELED SQUARED" << "\t" << "\t" << B << endl;
-    cout << "TOTAL TIME SPENT SQUARED" << "\t" << "\t" << C << endl;
-    cout << "TOTAL FITNESS" << "\t" << "\t" << corp.at(team).agents.at(indv).policies.at(p).policy_fitness << endl;
+    //cout << "TEAM" << "\t" << team << "\t" << "AGENT" << "\t" << indv << "\t" << "POLICY" << "\t" << p << endl;
+    //cout << "TOTAL NUMBER OF CONFLICTS" << "\t" << "\t" << A << endl;
+    //cout << "TOTAL DISTANCE TRAVELED SQUARED" << "\t" << "\t" << B << endl;
+    //cout << "TOTAL TIME SPENT SQUARED" << "\t" << "\t" << C << endl;
+    //cout << "TOTAL FITNESS" << "\t" << "\t" << corp.at(team).agents.at(indv).policies.at(p).policy_fitness << endl;
 }
 
 
@@ -1609,6 +1610,34 @@ void CCEA::write_policies_to_file()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Runs the entire CCEA process
+void CCEA::output_agent_info()
+{
+    for (int team=0; team<pP->num_teams; team++)
+    {
+        cout << "Number of Conflicts," << "\t" << "Distance Traveled Squared," << "\t" << "Time in Air Squared," << "\t" << "Total Fitness" << endl;
+        cout << "team" << "\t" << team << endl;
+        for (int indv=0; indv<pP->team_sizes.at(team); indv++)
+        {
+            cout << "agent" << "\t" << indv << endl;
+            for (int p=0; p<pP->num_policies; p++)
+            {
+                cout << "policy" << "\t" << p << endl;
+                double A = corp.at(team).agents.at(indv).policies.at(p).f_vals.at(0);
+                double B = corp.at(team).agents.at(indv).policies.at(p).f_vals.at(1);
+                double C = corp.at(team).agents.at(indv).policies.at(p).f_vals.at(2);
+                double D = corp.at(team).agents.at(indv).policies.at(p).policy_fitness;
+                cout << "\t" << "Fitness values" << "\t" << A << "\t" << B << "\t" << C << "\t" << D << endl;
+                //assert(corp.at(team).agents.at(indv).policies.at(p).selection_counter == pP->num_policies/2);
+            }
+            cout << endl;
+        }
+    }
+    
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Runs the entire CCEA process
 void CCEA::run_CCEA(int sr, int stat_run)
 {
     clock_t t1, t2;
@@ -1625,58 +1654,17 @@ void CCEA::run_CCEA(int sr, int stat_run)
             cout << "sr::gen" << "\t" << sr << "::" << gen << endl;
             cout << endl;
             build_team(gen);            //runs the entire build and simulation for each sim_team
-            //cout << "---------------------------------------------" << endl;
+            cout << "---------------------------------------------" << endl;
             sort_agent_policies();
             if (pP->fair_trial == 0)
             {
                 get_statistics();
             }
-            if (gen == 0)
-            {
-                cout << "First Generation" << endl;
-                for (int team=0; team<pP->num_teams; team++)
-                {
-                    cout << "team" << "\t" << team << endl;
-                    for (int indv=0; indv<pP->team_sizes.at(team); indv++)
-                    {
-                        cout << "agent" << "\t" << indv << endl;
-                        for (int p=0; p<pP->num_policies; p++)
-                        {
-                            cout << "policy" << "\t" << p << endl;
-                            cout << "\t" << "fitness" << "\t" <<  corp.at(team).agents.at(indv).policies.at(p).policy_fitness << endl;
-                        }
-                        cout << endl;
-                    }
-                }
-            }
-            
+            output_agent_info();
             natural_selection();
             sort_agent_policies();
-            
             //cout << "check nautral seclection" << endl;
-            /*
-             if (gen>0)
-             {
-             if (gen<pP->gen_max-1)
-             {
-             for (int team=0; team<pP->num_teams; team++)
-             {
-             for (int indv=0; indv<pP->team_sizes.at(team); indv++)
-             {
-             cout << "agent" << "\t" << indv << endl;
-             for (int p=0; p<pP->num_policies; p++)
-             {
-             cout << "policy" << "\t" << p << endl;
-             cout << "\t" << "fitness" << "\t" <<  corp.at(team).agents.at(indv).policies.at(p).policy_fitness << endl;
-             assert(corp.at(team).agents.at(indv).policies.at(p).selection_counter == pP->num_policies/2);
-             }
-             cout << endl;
-             }
-             }
-             }
-             }
-             */
-            
+            //output_agent_info();
         }
         if (gen == pP->gen_max-1)
         {
@@ -1690,20 +1678,7 @@ void CCEA::run_CCEA(int sr, int stat_run)
             {
                 get_statistics();
             }
-            for (int team=0; team<pP->num_teams; team++)
-            {
-                cout << "team" << "\t" << team << endl;
-                for (int indv=0; indv<pP->team_sizes.at(team); indv++)
-                {
-                    cout << "agent" << "\t" << indv << endl;
-                    for (int p=0; p<pP->num_policies; p++)
-                    {
-                        cout << "policy" << "\t" << p << endl;
-                        cout << "\t" << "fitness" << "\t" <<  corp.at(team).agents.at(indv).policies.at(p).policy_fitness << endl;
-                    }
-                    cout << endl;
-                }
-            }
+            output_agent_info();
         }
         //store conflict data here
         store_ave_conflict_data();
