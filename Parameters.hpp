@@ -41,7 +41,7 @@ public:
     int max_y_dim = 35;
     int min_z_dim = 0;
     int max_z_dim = 35;
-    int time_max = 10;                                         //max time simulator will run
+    int time_max = 200;                                         //max time simulator will run
     double delta_t = 0.1;                                       //simulator time step
     double max_flight_velocity = 5.0;                           //max velocity at which any given agetn can travel
     double max_travel_dist = max_flight_velocity*delta_t;       //max distance a agetn can travel in a time step
@@ -56,8 +56,8 @@ public:
     
     //Team Settings
     int num_teams = 2;          //must be an interger 0-2
-    int team_0 = 10;
-    int team_1 = 5;
+    int team_0 = 14;
+    int team_1 = 14;
     int team_2 = 0;
     int team_3 = 0;
     int team_4 = 0;
@@ -66,27 +66,26 @@ public:
     int team_7 = 0;
     int team_8 = 0;
     int team_9 = 0;
-    int num_policies = 6;
-    int num_waypoints = 1;      //number of intermediate waypoints, total number of waypoints is num_waypoints + 2
+    int num_policies = 50;
+    int num_waypoints = 6;      //number of intermediate waypoints, total number of waypoints is num_waypoints + 2
     
     vector<int> team_sizes;
     
     void set_team_sizes();
     
     //CCEA Settings
-    int gen_max = 2;
+    int gen_max = 300;
     int to_kill = num_policies/2;
     int to_replicate = to_kill;
     double mutate_percentage = 50;
     double mutation_range = 1;
-    int num_f_vals = 3;
+    int num_f_vals = 2;
     double w0 = 1;          //for linear combination
-    double w1 = 1;          //for linear combination
-    double w2 = 1;          //for linear combination
+    double w1 = 0;          //for linear combination
     
     //Experiments
     int coop_no_len = 0;                                    //0=off, 1=on
-    int coop_with_len = 0;                                  //0=off, 1=on
+    int coop_with_len = 1;                                  //0=off, 1=on
     int coop_fair = 0;                                      //0=off, 1=on
     int stat_coop_with_loaded_wp_with_len = 0;              //0=off, 1=on
     int uncoop_no_len = 0;                                  //0=off, 1=on
@@ -96,7 +95,7 @@ public:
     int domino_with_len = 0;                                //0=off, 1=on
     int stat_domino_with_loaded_wp_with_len = 0;            //0=off, 1=on
     int domino_behavioral_switch_with_len = 0;              //0=off, 1=on
-    int malicious_with_len = 1;                             //0=off, 1=on
+    int malicious_with_len = 0;                             //0=off, 1=on
     int stat_full_malicious_with_len = 0;                   //0=off, 1=on
     int stat_full_malicious_with_loaded_wp_with_len = 0;    //0=off, 1=on
     int leniency;

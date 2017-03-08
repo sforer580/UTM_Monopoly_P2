@@ -28,7 +28,7 @@ public:
     
     double dist_to_target_waypoint;
     double policy_fitness = 100000000000;
-    vector<double> f_vals;              //number of conflicts, distance, time
+    vector<double> f_vals;              //number of conflicts, time
     double current_travel_speed;
     int simulation_id;
     int selected;       //0 if not yet seleceted, 1 for selected
