@@ -56,7 +56,7 @@ public:
     //Functions for Simulation
     void set_up_experiment_parameters();
     void clone_policies();
-    void build_team(int gen);
+    void build_team(int sr, int gen);
     void reset_selction_counter();
     void reset_selection_identifiers();
     void build_sim_team(int po);
@@ -80,6 +80,8 @@ public:
     
     //Statistics
     int fcount = 0;
+    vector<double> team_0_f_vals;
+    vector<double> team_1_f_vals;
     vector<double> min_team_0_fitness;
     vector<double> ave_team_0_fitness;
     vector<double> max_team_0_fitness;
@@ -94,6 +96,8 @@ public:
     vector<double> ave_0_conflict;
     vector<double> ave_1_conflict;
     
+    void store_f_vals(int sr, int gen);
+    void write_f_vals_to_file();
     void store_ave_conflict_data();
     void get_statistics();
     void write_statistics_to_file(int sr);
@@ -861,8 +865,38 @@ void CCEA::get_policy_fitness(int po, int len)
 
 
 /////////////////////////////////////////////////////////////////
+//store the f vals for each agent in each team
+void CCEA::store_f_vals(int sr, int gen)
+{
+    for (int t=0; t<pP->num_teams; t++)
+    {
+        for (int a=0; a<pP->team_sizes.at(t); a++)
+        {
+            for (int p=0; p<pP->num_policies; p++)
+            {
+                if (t==0)
+                {
+                    team_0_f_vals.push_back(corp.at(t).agents.at(a).policies.at(p).f_vals.at(0));
+                    team_0_f_vals.push_back(corp.at(t).agents.at(a).policies.at(p).f_vals.at(1));
+                    team_0_f_vals.push_back(sr);
+                    team_0_f_vals.push_back(gen);
+                }
+                if (t==1)
+                {
+                    team_1_f_vals.push_back(corp.at(t).agents.at(a).policies.at(p).f_vals.at(0));
+                    team_1_f_vals.push_back(corp.at(t).agents.at(a).policies.at(p).f_vals.at(1));
+                    team_1_f_vals.push_back(sr);
+                    team_1_f_vals.push_back(gen);
+                }
+            }
+        }
+    }
+}
+
+
+/////////////////////////////////////////////////////////////////
 //runs the entire build and simulation for each sim_team
-void CCEA::build_team(int gen)
+void CCEA::build_team(int sr, int gen)
 {
     reset_selction_counter();
     
@@ -900,10 +934,12 @@ void CCEA::build_team(int gen)
                 
                 sim_team.erase(sim_team.begin(), sim_team.end());
             }
+            //add function for storig points here
+            store_f_vals(sr, gen);
         }
     }
     
-    
+    /*
     if (pP->fair_trial == 1)
     {
         if (fcount<pP->gen_max)
@@ -941,6 +977,7 @@ void CCEA::build_team(int gen)
             }
         }
     }
+     */
     
     
     /*
@@ -1290,6 +1327,37 @@ void CCEA::get_statistics()
         }
         max_team_1_fitness.push_back(max_1_sum/pP->team_sizes.at(1));
     }
+}
+
+
+/////////////////////////////////////////////////////////////////
+//writes the f values for each team to a text file
+void CCEA::write_f_vals_to_file()
+{
+    ofstream File13;
+    File13.open("Team_0_f_vals.txt",ios_base::app);
+    for (int i=0; i<team_0_f_vals.size()/4; i++)
+    {
+        File13 << team_0_f_vals.at(i*4) << "\t";
+        File13 << team_0_f_vals.at((i*4)+1) << "\t";
+        File13 << team_0_f_vals.at((i*4)+2) << "\t";
+        File13 << team_0_f_vals.at((i*4)+3) << "\t";
+        File13 << endl;
+    }
+    
+    ofstream File14;
+    File14.open("Team_1_f_vals.txt",ios_base::app);
+    for (int i=0; i<team_1_f_vals.size()/4; i++)
+    {
+        File14 << team_1_f_vals.at(i*4) << "\t";
+        File14 << team_1_f_vals.at((i*4)+1) << "\t";
+        File14 << team_1_f_vals.at((i*4)+2) << "\t";
+        File14 << team_1_f_vals.at((i*4)+3) << "\t";
+        File14 << endl;
+    }
+    
+    File13.close();
+    File14.close();
 }
 
 
@@ -1652,7 +1720,7 @@ void CCEA::run_CCEA(int sr, int stat_run)
         {
             cout << "sr::gen" << "\t" << sr << "::" << gen << endl;
             cout << endl;
-            build_team(gen);            //runs the entire build and simulation for each sim_team
+            build_team(sr, gen);            //runs the entire build and simulation for each sim_team
             cout << "---------------------------------------------" << endl;
             sort_agent_policies();
             if (pP->fair_trial == 0)
@@ -1670,7 +1738,7 @@ void CCEA::run_CCEA(int sr, int stat_run)
             cout << "-----------------------------------------------------------------------------------" << endl;
             cout << "-----------------------------------------------------------------------------------" << endl;
             cout << "Final Generation" << endl;
-            build_team(gen);       //runs the entire build and simulation for each sim_team
+            build_team(sr, gen);       //runs the entire build and simulation for each sim_team
             cout << "---------------------------------------------" << endl;
             sort_agent_policies();
             if (pP->fair_trial == 0)
@@ -1689,6 +1757,7 @@ void CCEA::run_CCEA(int sr, int stat_run)
     //system ("pause");
     float seconds = diff / CLOCKS_PER_SEC;
     cout << "run time" << "\t" << seconds << endl;
+    write_f_vals_to_file();
     write_statistics_to_file(sr);
     write_conflict_data_to_file(sr);
     write_policies_to_file();
